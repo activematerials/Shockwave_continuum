@@ -124,6 +124,25 @@ inline void G_getCF(int i,int j,int Nx,int Ny,REAL hx,REAL hy,conforce conf,Vect
                 CF.y=conf.p1*hy*(j-Ny/2);
             }
         }
+	else if(conf.type==10) { //hole lattice: uses N1 (number in x),N2 (number in y), p1 (prefactor), p2 (hole radius),p3 (max force range: >p2, <min of 1/2 hole distance)
+            r.x=i*hx;
+            r.y=j*hy;
+            a=Nx*hx/(1.0*conf.N1);
+            b=Ny*hy/(1.0*conf.N2);
+            n1=(int) (r.x/a);//r.x=r.x-(n1-0.5)*a;
+            n2=(int) (r.y/b);//r.y=r.y-(n2-0.5)*b;
+            hpos.x=(n1+0.5)*a;
+            hpos.y=(n2+0.5)*b;
+            dr.x=r.x-hpos.x;
+            dr.y=r.y-hpos.y;
+            dis=dr.x*dr.x+dr.y*dr.y;
+            if((dis<conf.p3*conf.p3) && (dis>conf.p2*conf.p2)) {
+                dis=sqrt(dis);
+                x=-conf.p1*(conf.p3-dis);
+                CF.x=x*dr.x;
+                CF.y=x*dr.y;
+            }
+        }
     }
 };
     
